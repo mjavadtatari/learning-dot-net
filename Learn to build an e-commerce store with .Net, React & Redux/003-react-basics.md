@@ -253,7 +253,7 @@ function App() {
 export default App;
 ```
 
-## File & Folders Organizations
+## React File & Folders Organizations
 
 در این بخش میخواهیم با ساختار فایل ها و فولدر ها آشنا بشیم و اینکه چطوری آنها رو مرتب در کنار هم قرار بدهیم تا در پروژه های بزرگ و شلوغ به مشکل بر نخوریم!
 
@@ -288,3 +288,125 @@ src/
 ├── App.js
 └── index.js
 ```
+
+## Create React Component
+
+در این قسمت میخواهیم یک component ایجاد کنیم. به عنوان مثال کد های مربوط به نمایش لیست products رو به صورت یه component جداگانه تعریف میکنیم.
+
+برای این منظور به صورت زیر یک پوشه به نام catalog درون پوشه features ایجاد مینماییم. داخل آن نیز یک فایل به نام Catalog.tsx ایجاد خواهیم کرد.
+محتوای این فایل به صورت زیر خواهد بود:
+
+```tsx
+export default function Catalog(props: any) {
+  return (
+    <>
+      <ul>
+        {props.products.map((product: any) => (
+          <li key={product.id}>
+            {product.name} - {product.price}
+          </li>
+        ))}
+      </ul>
+      <button onClick={props.addProduct}>add</button>
+    </>
+  );
+}
+```
+
+در کد فوق به منظور اینکه در تایپ اسکریپت با ارور مواجه نشویم، از گونه `any` برای props استفاده میکنیم.
+
+اما راه درست تر و بهتر برای این موضوع، تعریف گونه داده ورودی هاست:
+
+```tsx
+import { Product } from "../../app/models/product";
+
+interface Props {
+  products: Product[]; // array of Products
+  addProduct: () => void; // a function with no parameters and void return
+}
+
+export default function Catalog(props: Props) {
+  return (
+    <>
+      <ul>
+        {props.products.map((product) => (
+          <li key={product.id}>
+            {product.name} - {product.price}
+          </li>
+        ))}
+      </ul>
+      <button onClick={props.addProduct}>add</button>
+    </>
+  );
+}
+```
+
+البته که می توانیم از Destructuring نیز برای راحتی بیشتر و مشخص شدن ورودی ها، به صورت زیر استفاده کنیم:
+
+```tsx
+import { Product } from "../../app/models/product";
+
+interface Props {
+  products: Product[]; // array of Products
+  addProduct: () => void; // a function with no parameters and void return
+}
+
+export default function Catalog({ products, addProduct }: Props) {
+  return (
+    <>
+      <ul>
+        {products.map((product) => (
+          <li key={product.id}>
+            {product.name} - {product.price}
+          </li>
+        ))}
+      </ul>
+      <button onClick={addProduct}>add</button>
+    </>
+  );
+}
+```
+
+محتوای فایل app.tsx را نیز به صورت زیر تغییر میدهیم:
+
+```tsx
+return (
+  <>
+    <Catalog products={products} addProduct={addProduct} />
+  </>
+);
+```
+
+## Adding Material UI
+
+در این بخش میخواهیم MUI را به react اضافه کنیم و ظاهر را با استفاده از آن پیاده سازی کنیم.
+
+طبق توضیحات سایتش عمل می کنیم و به نصب کتابخانه های آن میپردازیم:
+
+```cmd
+npm install @mui/material @emotion/react @emotion/styled
+```
+
+برای نصب فونت های پیشفرض دستور زیر را اجرا میکنیم:
+
+```cmd
+npm install @fontsource/roboto
+```
+
+سپس کد های زیر را به `index.tsx` اضافه می کنیم:
+
+```tsx
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+```
+
+و در آخر نیز آیکون های مورد استفاده را نصب می کنیم:
+
+```cmd
+npm install @mui/icons-material
+```
+
+و در ادامه نیز، طبق مستندات آن، از کامپوننت های این کتابخانه استفاده می کنیم.
+
